@@ -1,0 +1,468 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Turf Provider Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f2f2f2;
+        }
+        .image-wrapper {
+            position: relative;
+            width: 470px;
+            height: 350px;
+            overflow: hidden;
+        }
+
+        .turf-image {
+            width: 100%;
+            height: auto;
+            transition: transform 1.0s ease-in-out;
+        }
+
+        .image-overlay {
+            position: absolute;
+            top: 0;
+            left: -100%; /* Initially off-screen */
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 20px;
+            transition: left 0.3s ease-in-out;
+        }
+
+        .image-wrapper:hover .turf-image {
+            transform: scale(1.1); /* Scale up the image on hover */
+        }
+
+        .image-wrapper:hover .image-overlay {
+            left: 0; /* Slide in the overlay on hover */
+        }
+        .image-overlay a {
+            display: inline-block;
+            padding: 8px 16px;
+            background-color: #1e6e21;
+            color: white;
+            text-decoration: none;
+            transition: background-color 0.3s ease;
+        }
+
+        .image-overlay a:hover {
+            background-color: #45a049;
+            color: white;
+        }
+
+
+        header {
+            background-color: #333;
+            color: #fff;
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 20px;
+            align-items: center;
+        }
+
+        .header .logo h1 {
+            font-size: 24px;
+        }
+
+        .header .user-profile {
+            display: flex;
+            align-items: center;
+        }
+
+        .header .user-profile img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+
+        .header .user-profile a {
+            color: #fff;
+            text-decoration: none;
+            margin-left: 10px;
+        }
+
+        nav ul {
+            list-style: none;
+        }
+
+        nav ul li {
+            display: inline;
+        }
+
+        nav ul li a {
+            display: inline-block;
+            text-decoration: none;
+            padding: 10px 20px;
+            color: #333;
+            background-color: #eee;
+            border-radius: 5px;
+            margin-right: 10px;
+        }
+
+        main {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            font-size: 24px;
+            text-align: center;
+        }
+
+        .stat {
+            text-align: center;
+            padding: 20px;
+            background-color: #007bff;
+            color: white;
+            border-radius: 5px;
+            margin: 5px;
+            display: inline-block;
+        }
+
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+        }
+
+        /* Additional styles for your dashboard */
+
+        /* Quick Stats section */
+        #quick-stats {
+            display: flex;
+            justify-content: space-around;
+            margin: 20px 0;
+        }
+
+        /* Your Turf Listings section */
+        #turf-listings {
+            margin-top: 20px;
+        }
+
+        .turf-list {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+        }
+
+        .turf-item {
+            width: calc(70% - 20px);
+            margin-bottom: 20px;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 20px;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .turf-item img {
+            max-width: 100%;
+            height: auto;
+        }
+
+        /* Booking Requests section */
+        #booking {
+            margin-top: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            border: 1px solid #ddd;
+        }
+
+        th, td {
+            padding: 10px;
+            border: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #007bff;
+            color: white;
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            background-color: #333;
+            color: white;
+            padding: 20px 0;
+        }
+            /* Add your calendar styles here */
+
+                /* Calendar styles */
+                .calendar {
+            padding: 20px;
+            margin-top: 20px;
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .calendar ul {
+            display: flex;
+            flex-wrap: wrap;
+            list-style: none;
+            text-align: center;
+        }
+
+        .calendar .days {
+            margin-bottom: 20px;
+        }
+
+        .calendar li {
+            color: #333;
+            width: calc(100% / 7);
+            font-size: 1.07rem;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .calendar .weeks li {
+            font-weight: 500;
+            cursor: default;
+        }
+
+        .calendar .days li {
+            z-index: 1;
+            position: relative;
+            margin-top: 30px;
+        }
+
+        .days li.inactive {
+            color: #aaa;
+        }
+
+        .days li.active {
+            color: blue;
+            font-weight: bold;
+        }
+
+        .days li span {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .days li:not(.active) span {
+            color: #333;
+        }
+
+        .days li:not(.active):hover::before {
+            background: #f2f2f2;
+        }
+        .weeks {
+        background-color: #f2f2f2; /* Change to your desired background color */
+        padding: 20px; /* Adjust padding as needed */
+        border-radius: px; /* Optional: Add border radius for rounded corners */
+        }
+        .booked {
+    background-color: #FF5733; /* Change the background color as needed */
+    color: white; /* Change the text color as needed */
+    border-radius: 50%; /* Optional: Add border radius for rounded appearance */
+}
+    </style>
+    
+    
+</head>
+<body>
+    <!-- Navigation Bar -->
+    
+    <header>
+        <div class="logo">
+            <h1>Sportigo Turf Provider</h1>
+        </div>
+        <div class="user-profile">
+            <p><img src="{% static 'images/avatar.png' %}" width="50" height="50"  alt="User Avatar"></p>
+            <a href="{% url 'logout' %}" style="color: #ddd;">Logout</a>
+        </div>
+    </header>
+    
+    <nav>
+        <ul>
+            <li><a href="#">Dashboard</a></li>
+            <li><a href="{% url 'add_turf' %}">Add Turf</a></li>
+            <li><a href="{% url 'provider_update' %}">Update Password</a></li>
+        </ul>
+    </nav>
+
+    <!-- Main Content -->
+    <main>
+
+        
+<!-- Quick Stats -->
+    <section id="quick-stats" style="display: flex; justify-content: space-around; background-color: #f2f2f2; padding: 20px; border-radius: 10px;">
+        <div class="stat" style="text-align: center; padding: 20px; background-color: #12304f; color: white; border-radius: 5px; width: 30%;">
+            <h2>Total Turfs</h2>
+            <p style="font-size: 24px;">{{ turf_count }}</p>
+        </div>
+        <div class="stat" style="text-align: center; padding: 20px; background-color: #163c1f; color: white; border-radius: 5px; width: 30%;">
+            <a href="{% url 'bookingsummary' %}" style="color: white; text-decoration: none;">
+                <h2>Bookings</h2>
+                <p>Club user and normal user bookings</p>
+            </a>
+        </div>
+        
+        </div>
+        <div class="stat" style="text-align: center; padding: 20px; background-color: #7f0713; color: white; border-radius: 5px; width: 30%;">
+            <h2>Revenue Today</h2>
+            <p style="font-size: 24px;">{{ total_earnings }}</p>
+        </div>
+    </section>
+
+
+<main style="display: flex;">
+<!-- Your Turf Listings -->
+<section id="turf-listings" style="flex: 1;">
+    <h2>Your Turfs</h2>
+    <div class="turf-list">
+        {% for turf in your_turfs %}
+            <div class="turf-item">
+                <div class="image-wrapper">
+                    {% if turf.images.first %}
+                        <img class="turf-image" src="{{ turf.images.first.image.url }}" alt="{{ turf.turf_name }}">
+                    {% else %}
+                        
+                        <img class="turf-image" src="{% static 'path_to_default_image/default_image.png' %}" alt="{{ turf.turf_name }}">
+                    {% endif %}
+                    <div class="image-overlay">
+                        <h3>{{ turf.turf_name }}</h3>
+                        <p>Location: {{ turf.location }}</p>
+                        <p>Price: ₹{{ turf.price_per_hour }} per hour</p>
+                        <p>Price: ₹{{ turf.price_per_day }} per day</p>
+                        <a href="{% url 'manage_turf' turf.id %}">Manage This Turf</a>
+                    </div>
+                </div>
+            </div>
+        {% empty %}
+            <p>No turfs available</p>
+        {% endfor %}
+    </div>
+</section>
+
+
+        <!-- Calendar Section -->
+        <section id="calendar" class="calendar" style="flex: 1;">
+            <ul class="weeks">
+                <li>Sun</li>
+                <li>Mon</li>
+                <li>Tue</li>
+                <li>Wed</li>
+                <li>Thu</li>
+                <li>Fri</li>
+                <li>Sat</li>
+            </ul>
+            <ul class="days"></ul>
+        </section>
+    </main>
+
+    <!-- Footer Section -->
+    <footer>
+        <p>&copy; 2023 Turf Provider, Inc.</p>
+    </footer>
+
+    <!-- JavaScript Section -->
+<!-- JavaScript Section -->
+<script>
+    const daysTag = document.querySelector(".days"),
+        weeksTag = document.querySelector(".weeks"),
+        prevIcon = document.querySelector("#prev"),
+        nextIcon = document.querySelector("#next");
+
+    let date = new Date(),
+        currYear = date.getFullYear(),
+        currMonth = date.getMonth();
+
+    const months = ["January", "February", "March", "April", "May", "June", "July",
+        "August", "September", "October", "November", "December"];
+
+    const renderCalendar = () => {
+        let firstDayofMonth = new Date(currYear, currMonth, 1).getDay(),
+            lastDateofMonth = new Date(currYear, currMonth + 1, 0).getDate(),
+            lastDayofMonth = new Date(currYear, currMonth, lastDateofMonth).getDay(),
+            lastDateofLastMonth = new Date(currYear, currMonth, 0).getDate();
+        let liTag = "";
+
+        const daysOfWeek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+
+        weeksTag.innerHTML = "<li>" + daysOfWeek.join("</li><li>") + "</li>";
+
+        for (let i = firstDayofMonth; i > 0; i--) {
+            liTag += `<li class="inactive">${lastDateofLastMonth - i + 1}</li>`;
+        }
+
+        for (let i = 1; i <= lastDateofMonth; i++) {
+            const today = new Date();
+            const isToday = today.getFullYear() === currYear && today.getMonth() === currMonth && today.getDate() === i;
+            liTag += `<li class="${isToday ? 'active' : ''}">${i}<span>${i}</span></li>`;
+        }
+
+        for (let i = lastDayofMonth; i < 6; i++) {
+            liTag += `<li class="inactive">${i - lastDayofMonth + 1}</li>`;
+        }
+        daysTag.innerHTML = liTag;
+
+        const dateElements = daysTag.querySelectorAll("li");
+        dateElements.forEach(dateElement => {
+            dateElement.addEventListener("click", () => {
+                const selectedDate = dateElement.innerText;
+                console.log(`Selected date: ${months[currMonth]} ${selectedDate}, ${currYear}`);
+                // Handle date selection here
+            });
+        });
+    }
+    renderCalendar();
+
+    prevIcon.addEventListener("click", () => {
+        currMonth--;
+        if (currMonth < 0) {
+            currMonth = 11;
+            currYear--;
+        }
+        renderCalendar();
+    });
+
+    nextIcon.addEventListener("click", () => {
+        currMonth++;
+        if (currMonth > 11) {
+            currMonth = 0;
+            currYear++;
+        }
+        renderCalendar();
+    });
+
+    // JavaScript code for marking booked dates
+    const bookedDates = [
+        { date: "2024-04-21" },
+        { date: "2024-04-22" },
+        { date: "2024-04-23" },
+        { date: "2024-04-24" },
+        { date: "2024-04-25" }
+    ]; // Sample booked dates
+    const markBookedDates = () => {
+        const dateElements = daysTag.querySelectorAll("li");
+        bookedDates.forEach(bookedDate => {
+            dateElements.forEach(dateElement => {
+                if (dateElement.innerText === bookedDate.date.split("-")[2]) {
+                    dateElement.classList.add("booked");
+                }
+            });
+        });
+    }
+    markBookedDates();
+</script>
+
+</body>
+</html>

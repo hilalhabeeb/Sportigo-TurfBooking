@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Booking Page</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        /* Add your CSS styles here */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            background-color: #333;
+            color: #fff;
+            padding: 10px 0;
+            text-align: center;
+        }
+        nav ul {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+            background-color: #f4f4f4;
+            overflow: hidden;
+            display: flex;
+        }
+
+        nav ul li a {
+            display: block;
+            padding: 10px 20px;
+            color: #333;
+            text-decoration: none;
+        }
+        nav ul li a:hover {
+            background-color: #ddd;
+        }
+        footer {
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            padding: 10px 0;
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+        }
+        .container {
+            padding: 20px;
+        }
+        .booking-options {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+        
+        .booking-option {
+            margin-right: 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+        }
+
+        .user-type {
+            margin-right: 30px; /* Adjust margin as needed */
+        }   
+        .booking-option input[type="radio"] {
+            display: none;
+        }
+        .booking-option label {
+            padding-left: 5px;
+        }
+        
+        .booking-option i {
+            margin-right: 5px;
+        }
+        .booking-table {
+            width: 100%;
+            border-collapse: collapse;
+            display: none;
+        }
+        .booking-table th, .booking-table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        .booking-table th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <header>
+        <h1><i class="fas fa-calendar-alt"></i> Sportigo Turf Booking</h1>
+    </header>
+    
+    <nav>
+        <ul>
+            <li><a href="{% url 'providerhome' %}">Back to Home</a></li>
+        </ul>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container">
+        <div class="booking-options">
+            <div class="user-type">
+                <span><b>Choose user type </b></span>
+            </div>
+            <div class="booking-option" onclick="showTable('club-booking')">
+                <input type="radio" id="club-booking" name="booking-type" value="club" checked>
+                <label for="club-booking">
+                    <span class="radio-circle"></span>
+                    <span class="tick-box">&#10003;</span>
+                    <i class="fas fa-users"></i> Club Bookings
+                </label>
+            </div>
+            <div class="booking-option" onclick="showTable('normal-booking')">
+                <input type="radio" id="normal-booking" name="booking-type" value="normal">
+                <label for="normal-booking">
+                    <span class="radio-circle"></span>
+                    <span class="tick-box">&#10003;</span>
+                    <i class="fas fa-user"></i> Normal Bookings
+                </label>
+            </div>
+        </div>
+    </div>
+
+        <!-- Club Bookings Table -->
+        <table id="club-table" class="booking-table">
+            <thead>
+                <tr>
+                    <th>Club Email</th>
+                    <th>Club Mobile Number</th>
+                    <th>Club ID</th>
+                    <th>Created Date</th>
+                    <th>Booking Slot</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Club Bookings -->
+                {% for clubbooking in clubbookings %}
+                <tr>
+                    <td>{{ clubbooking.user.email }}</td>
+                    <td>{{ clubbooking.mobile_number }}</td>
+                    <td>{{ clubbooking.club_id }}</td>
+                    <td>{{ clubbooking.created_at }}</td>
+                    <td>{{ clubbooking.start_date }} - {{ clubbooking.end_date }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        
+        <table id="normal-table" class="booking-table">
+            <thead>
+                <tr>
+                    <th>User Email</th>
+                    <th>User Mobile Number</th>
+                    <th>Date</th>
+                    <th>Time Slot</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Normal Bookings -->
+                {% for booking in bookings %}
+                <tr>
+                    <td>{{ booking.user.email }}</td>
+                    <td>{{ booking.user.phone_number }}</td>
+                    <td>{{ booking.booking_date }}</td>
+                    <td>{{ booking.start_time }} - {{ booking.end_time }}</td>
+                    <td>
+                        {% if booking.is_canceled %}
+                            Cancelled
+                        {% else %}
+                            Confirmed
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2024 Sportigo Turf Booking</p>
+    </footer>
+
+    <script src="https://kit.fontawesome.com/a076d05399.js"></script>
+    <script>
+        function showTable(type) {
+            if (type === 'club-booking') {
+                document.getElementById('club-table').style.display = 'table';
+                document.getElementById('normal-table').style.display = 'none';
+            } else if (type === 'normal-booking') {
+                document.getElementById('club-table').style.display = 'none';
+                document.getElementById('normal-table').style.display = 'table';
+            }
+        }
+    </script>
+</body>
+</html>
